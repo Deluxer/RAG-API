@@ -1,0 +1,10 @@
+precio,marca,modelo,año,kilometraje,tipo_de_maquina,transmision,drive,hand_drive,combustible
+80000,nissan,march,2003,80000,1240,at,2wd,rhd,gasoline
+110000,nissan,march,2010,53000,1200,at,2wd,rhd,gasoline
+165000,nissan,lafesta,2005,47690,2000,at,2wd,rhd,gasoline
+190000,toyota,avensis,2008,130661,1990,at,2wd,rhd,gasoline
+190000,daihatsu,mira,2006,66300,660,at,2wd,rhd,gasoline
+190000,daihatsu,mira,2004,81400,660,at,2wd,rhd,gasoline
+220000,nissan,march,2010,117000,1200,at,2wd,rhd,gasoline
+230000,volkswagen,passat,2008,127763,3190,at,4wd,rhd,gasoline
+275000,mazda,bongo van,2010,178218,1800,mt,2wd,rhd,gasoline

@@ -1,0 +1,9 @@
+precio: 80000, marca: nissan, modelo: march, año: 2003
+precio: 110000, marca: nissan, modelo: march, año: 2010
+precio: 165000, marca: nissan, modelo: lafesta, año: 2005
+precio: 190000, marca: toyota, modelo: avensis, año: 2008
+precio: 190000, marca: daihatsu, modelo: mira, año: 2006
+precio: 190000, marca: daihatsu, modelo: mira, año: 2004
+precio: 220000, marca: nissan, modelo: march, año: 2010
+precio: 230000, marca: volkswagen, modelo: passat, año: 2008
+precio: 275000, marca: mazda, modelo: bongo van, año: 2010
