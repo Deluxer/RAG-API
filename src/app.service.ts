@@ -19,30 +19,27 @@ export class AppService {
       query: 'Dame el precio del auto mas barato'
     });
   
-    // Output response
     console.log(response.toString());
     return 'GPT3!';
   }
 
   async llama2() {
     const llamaindex = await import('llamaindex');
-    const { Ollama, Document, Refine, CompactAndRefine, TreeSummarize, SimpleResponseBuilder, ResponseSynthesizer, VectorStoreIndex, serviceContextFromDefaults, HuggingFaceEmbedding } = llamaindex;
-    const ollamaLLM = new Ollama({baseURL: 'http://127.0.0.1:11434', model: 'mistral'})
+    const { Ollama, Document, Refine, ResponseSynthesizer, VectorStoreIndex, serviceContextFromDefaults, HuggingFaceEmbedding } = llamaindex;
+    
+    const ollamaLLM = new Ollama({baseURL: 'http://127.0.0.1:11434', model: 'llama2'})
     const embedLLM = new HuggingFaceEmbedding({modelType: 'Xenova/all-mpnet-base-v2'})
+    const serviceContext = serviceContextFromDefaults({llm: ollamaLLM, embedModel: embedLLM})
+
     const data = fs.readFileSync(
       "src/dataset/cars_dataset.txt",
       "utf-8",
     );
-
     const document = new Document({ text: data });
-    const serviceContext = serviceContextFromDefaults({llm: ollamaLLM, embedModel: embedLLM})
+    
     const index = await VectorStoreIndex.fromDocuments([document], {
       serviceContext: serviceContext
     });
-
-    // console.log({
-    //   embeding: index.serviceContext.embedModel
-    // })
 
     const promptTemplate = ({ context = "", query = "" }) => {
       return `Dado al siguiente contexto, responde las siguientes preguntas
@@ -63,7 +60,7 @@ export class AppService {
 
     const queryEngine = index.asQueryEngine({responseSynthesizer});
     const response = await queryEngine.query({
-      query: 'Dame el precio del auto mas barato'
+      query: 'Dame el precio del auto mas economico'
     });
   
     console.log(response.toString());
