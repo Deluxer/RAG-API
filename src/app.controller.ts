@@ -10,8 +10,18 @@ export class AppController {
     return this.appService.gpt3();
   }
 
-  @Get('llama2')
-  llama2() {
-    return this.appService.llama2();
+  @Get('llama2/documents')
+  documents() {
+    return this.appService.fromDocuments();
+  }
+
+  @Get('llama2/vectorestore')
+  vectorstore() {
+    return this.appService.fromVectoreStore();
+  }
+  
+  @Get('loaddata')
+  loaddata() {
+    return this.appService.loadData();
   }
 }
