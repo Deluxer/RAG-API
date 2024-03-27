@@ -1,5 +1,6 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { AppService } from './app.service';
+import { ParamsDto } from './dto/params.dto';
 
 @Controller()
 export class AppController {
@@ -15,8 +16,15 @@ export class AppController {
     return this.appService.llama2();
   }
 
-  @Get('llama2/load-data')
+  @Get('llm/load-data')
   loadData() {
     return this.appService.loadData();
+  }
+
+  @Get('llm/search')
+  llmSearch(
+    @Query() paramsDto: ParamsDto,
+  ) {
+    return this.appService.llmSearch(paramsDto);
   }
 }

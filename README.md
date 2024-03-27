@@ -17,6 +17,21 @@ Add an .env file and set OPENAI_API_KEY, see [OpenAI api key](https://platform.o
 $ OPENAI_API_KEY='sk-xxxxx'
 ```
 
+## Vector search index
+name: embedded_flowers_index_768
+```json
+{
+  "fields": [
+    {
+      "numDimensions": 768,
+      "path": "embedding",
+      "similarity": "euclidean",
+      "type": "vector"
+    }
+  ]
+}
+```
+
 ## Installation
 
 ```bash
