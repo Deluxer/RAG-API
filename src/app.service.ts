@@ -3,6 +3,7 @@ import * as fs from 'fs'
 import { MongoClient } from 'mongodb';
 import { Injectable } from '@nestjs/common';
 import { ParamsDto } from './dto/params.dto';
+import { ChatMessage } from './entities/message.entity';
 
 @Injectable()
 export class AppService {
@@ -107,15 +108,16 @@ export class AppService {
   }
 
   async llmSearch(paramsDto: ParamsDto) {
-    const { query } = paramsDto;
+    const { query, id } = paramsDto;
     const llm = new OpenAI({ model: "gpt-3.5-turbo" });
     const embedLLM = new OpenAIEmbedding({model: 'text-embedding-3-small', dimensions: 768})
     // const embedLLM = new HuggingFaceEmbedding({modelType: 'Xenova/all-mpnet-base-v2'})
-    // const llm = new Ollama({baseURL: 'http://127.0.0.1:11434', model: 'mistral'})
+    // const llm = new Ollama({baseURL: 'http://127.0.0.1:11434', model: 'llama3'})
 
     const serviceContext = serviceContextFromDefaults({llm: llm, embedModel: embedLLM})
 
     const client = new MongoClient(this.mongoUri);
+    const chatbotCollection = client.db(this.databaseName).collection<ChatMessage>('messages');
     const vectorStore = new MongoDBAtlasVectorSearch({
       mongodbClient: client,
       dbName: this.databaseName,
@@ -146,11 +148,26 @@ export class AppService {
       contextSystemPrompt: promptTemplate
     });
 
+    await chatbotCollection.updateOne(
+      { id: id },
+      { $push: { messages: { role: 'user', content: query } } },
+      { upsert: true }
+    );
+
+    const chatHistory: ChatMessage = await chatbotCollection.find({ id: id }).next();
+    const { messages } = chatHistory;
+
     const result = await chatEngine.chat({
       message: query,
-      chatHistory: [],
+      chatHistory: messages,
       stream: false,
     });
+
+    await chatbotCollection.updateOne(
+      { id: id },
+      { $push: { messages: { role: 'assistant', content: result.response } } },
+      { upsert: true }
+    );
 
     return result.response;
   }
