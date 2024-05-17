@@ -40,7 +40,7 @@ export class AppService {
   }
 
   async llama2() {
-    const ollamaLLM = new Ollama({baseURL: 'http://127.0.0.1:11434', model: 'llama2'})
+    const ollamaLLM = new Ollama({baseURL: 'http://127.0.0.1:11434', model: 'llama3:instruct'})
     const embedLLM = new HuggingFaceEmbedding({modelType: 'Xenova/all-mpnet-base-v2'})
     const serviceContext = serviceContextFromDefaults({llm: ollamaLLM, embedModel: embedLLM})
 
@@ -108,11 +108,17 @@ export class AppService {
   }
 
   async llmSearch(paramsDto: ParamsDto) {
-    const { query, id } = paramsDto;
-    const llm = new OpenAI({ model: "gpt-3.5-turbo" });
-    const embedLLM = new OpenAIEmbedding({model: 'text-embedding-3-small', dimensions: 768})
-    // const embedLLM = new HuggingFaceEmbedding({modelType: 'Xenova/all-mpnet-base-v2'})
-    // const llm = new Ollama({baseURL: 'http://127.0.0.1:11434', model: 'llama3'})
+    const { query, id, model } = paramsDto;
+    let llm: OpenAI | Ollama;
+    let embedLLM: HuggingFaceEmbedding | OpenAIEmbedding;
+    
+    if(model === 'llama2') {
+      embedLLM = new HuggingFaceEmbedding({modelType: 'Xenova/all-mpnet-base-v2'})
+      llm = new Ollama({baseURL: 'http://127.0.0.1:11434', model: model})
+    } else {
+      llm = new OpenAI({ model: "gpt-3.5-turbo" });
+      embedLLM = new OpenAIEmbedding({model: 'text-embedding-3-small', dimensions: 768})
+    }
 
     const serviceContext = serviceContextFromDefaults({llm: llm, embedModel: embedLLM})
 
@@ -122,7 +128,7 @@ export class AppService {
       mongodbClient: client,
       dbName: this.databaseName,
       collectionName: this.vectorCollectionName,
-      indexName: this.indexName,
+      indexName:  this.indexName,
     });
     const index = await VectorStoreIndex.fromVectorStore( vectorStore, serviceContext );
 
@@ -135,7 +141,7 @@ export class AppService {
       3. Haz 1-3 preguntas adicionales para entender las necesidades del cliente
       4. De la lista obtenida, recomienda 1-2 arreglos florales acompañado del nombre, precio y url
 
-      Responde en *español* y en cada respuesta envia 1-3 emojis. Divide la respuesta en párrafos de 2-3 oraciones y envia un maximo de 600 caracteres.
+      Responde en *español* y en cada respuesta envia 1-3 emojis. Divide la respuesta en párrafos de 2-3 oraciones.
       ${query}
 
       ${context}
@@ -147,6 +153,12 @@ export class AppService {
       retriever,
       contextSystemPrompt: promptTemplate
     });
+  
+    console.log({
+      llm: index.embedModel,
+      embedModel: index.embedModel,
+      chatModel: chatEngine.chatModel,
+    })
 
     await chatbotCollection.updateOne(
       { id: id },
