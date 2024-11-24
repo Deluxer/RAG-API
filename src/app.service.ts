@@ -1,4 +1,4 @@
-import { Ollama, Document, VectorStoreIndex, Refine, ResponseSynthesizer, serviceContextFromDefaults, HuggingFaceEmbedding, SimpleMongoReader, MongoDBAtlasVectorSearch, storageContextFromDefaults, TreeSummarize, OpenAIEmbedding, ContextChatEngine, OpenAI } from 'llamaindex';
+import { Ollama, OllamaEmbedding, Document, VectorStoreIndex, Refine, ResponseSynthesizer, serviceContextFromDefaults, HuggingFaceEmbedding, SimpleMongoReader, MongoDBAtlasVectorSearch, storageContextFromDefaults, TreeSummarize, OpenAIEmbedding, ContextChatEngine, OpenAI } from 'llamaindex';
 import * as fs from 'fs'
 import { MongoClient } from 'mongodb';
 import { Injectable } from '@nestjs/common';
@@ -17,7 +17,7 @@ export class AppService {
     this.mongoUri = process.env.MONGODB_URI!;
     this.databaseName = process.env.MONGODB_DATABASE!;
     this.collectionName = process.env.MONGODB_COLLECTION!;
-    this.vectorCollectionName = process.env.MONGODB_VECTORS!;
+    this.vectorCollectionName = process.env.MONGODB_VECTOR_COLLECTION_NAME!;
     this.indexName = process.env.MONGODB_VECTOR_INDEX!;
   }
 
@@ -82,7 +82,8 @@ export class AppService {
 
   async loadData() {
     // const embedLLM = new HuggingFaceEmbedding({modelType: 'Xenova/all-mpnet-base-v2'})
-    const embedLLM = new OpenAIEmbedding({model: 'text-embedding-3-small', dimensions: 768})
+    // const embedLLM = new OpenAIEmbedding({model: 'text-embedding-3-small', dimensions: 768})
+    const embedLLM = new OllamaEmbedding({model: 'mxbai-embed-large', contextWindow: 512})
     const serviceContext = serviceContextFromDefaults({embedModel: embedLLM})
 
     const client = new MongoClient(this.mongoUri);

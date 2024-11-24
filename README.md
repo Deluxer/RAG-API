@@ -51,6 +51,26 @@ $ yarn run start:dev
 $ yarn run start:prod
 ```
 
+1. Install node
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+nvm install 20
+source ~/.bashrc
+
+1. Install yarn
+curl -o- -L https://yarnpkg.com/install.sh | bash
+source ~/.bashrc
+
+
+source-clone
+  - bin/
+    - 64bts
+      - source-clone.so
+  - data/
+    - locale/
+      - de-DE.ini
+      - en-US.ini
+      - es-ES.ini
+      - pt-BR.ini
 
 
 ## Stay in touch
